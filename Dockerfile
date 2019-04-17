@@ -1,5 +1,5 @@
 # Inspired by https://github.com/mumoshu/dcind
-FROM docker:dind
+FROM alpine:edge
 
 LABEL maintainer="Anian Ziegler" \
       email="it@cioplenu.de"
@@ -17,6 +17,11 @@ RUN apk --update --no-cache add \
     make \
     py-pip \
     redis \
+    docker \
+    jq \
+    ca-certificates \
+    xz \
+    util-linux \
  && apk upgrade \
  && pip install docker-compose==${DOCKER_COMPOSE_VERSION} \
 # Install entrykit
