@@ -1,5 +1,5 @@
 # Inspired by https://github.com/mumoshu/dcind
-FROM alpine:3.10
+FROM alpine:3.10 as base
 
 LABEL maintainer="Anian Ziegler" \
       email="it@cioplenu.de"
@@ -18,6 +18,12 @@ RUN apk --no-cache add bash curl util-linux device-mapper py-pip python-dev libf
 # Include functions to start/stop docker daemon
 COPY docker-lib.sh /docker-lib.sh
 COPY entrypoint.sh /entrypoint.sh
+COPY setup /
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/bin/bash"]
+
+FROM base as go
+
+RUN apk --no-cache add go
+

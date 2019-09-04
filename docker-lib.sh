@@ -51,6 +51,7 @@ sanitize_cgroups() {
 }
 
 start_docker() {
+  message header "Setting up docker"
   echo "Starting Docker..."
 
   if [ -f /tmp/docker.pid ]; then
