@@ -2,9 +2,18 @@
 
 [![](https://images.microbadger.com/badges/image/netresearch/dcind.svg)](http://microbadger.com/images/netresearch/dcind "Get your own image badge on microbadger.com")
 
-Use this ```Dockerfile``` to build a base image for your integration tests in [Concourse CI](http://concourse.ci/). Alternatively, you can use a ready-to-use image from the Docker Hub: [netresearch/dcind](https://hub.docker.com/r/netresearch/dcind/). The image is Alpine based.
+
+### Versioning
+
+This repository and corresponding images on Docker Hub follow the semantic versioning [rules](https://semver.org/). It is advised to not rely on the `latest` tag when using `amidos/dcind` image in your CI pipelines. Consider using a specific version, like `amidos/dcind:1`.
+
+### Usage
+
+Use this ```Dockerfile``` to build a base image for your integration tests in [Concourse CI](http://concourse.ci/). Alternatively, you can use a ready-to-use image from the Docker Hub: [amidos/dcind](https://hub.docker.com/r/amidos/dcind/). The image is Alpine based.
 
 Here is an example of a Concourse [job](http://concourse.ci/concepts.html) that uses ```netresearch/dcind``` image to run a bunch of containers in a task, and then runs the integration test suite. You can find a full version of this example in the [```example```](example) directory.
+
+Note that `docker-lib.sh` has bash dependencies, so it is important to use `bash` in your task.
 
 ```yaml
   - name: integration
@@ -25,13 +34,13 @@ Here is an example of a Concourse [job](http://concourse.ci/concepts.html) that 
           image_resource:
             type: docker-image
             source:
-              repository: netresearch/dcind
+              repository: amidos/dcind
           inputs:
             - name: code
             - name: redis
             - name: busybox
           run:
-            path: sh
+            path: bash
             args:
               - -exc
               - |
@@ -59,7 +68,6 @@ Here is an example of a Concourse [job](http://concourse.ci/concepts.html) that 
                 message info Not sure if this is required. It's quite possible that Concourse is smart enough to clean up the Docker mess itself.
                 docker-compose -f code/example/integration.yml down
                 docker volume rm $(docker volume ls -q)
-
 
 ```
 

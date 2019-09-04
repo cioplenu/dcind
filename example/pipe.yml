@@ -62,7 +62,7 @@ jobs:
             - name: redis
             - name: busybox
           run:
-            path: sh
+            path: bash
             args:
               - -exc
               - |
@@ -89,5 +89,4 @@ jobs:
                 # Cleanup.
                 # Not sure if this is required.
                 # It's quite possible that Concourse is smart enough to clean up the Docker mess itself.
-                docker-compose -f code/example/integration.yml down
                 docker volume rm $(docker volume ls -q)
