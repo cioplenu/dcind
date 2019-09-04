@@ -1,48 +1,23 @@
 # Inspired by https://github.com/mumoshu/dcind
-FROM alpine:edge
+FROM alpine:3.10
 
 LABEL maintainer="Anian Ziegler" \
       email="it@cioplenu.de"
 
-ENV DOCKER_COMPOSE_VERSION=1.22.0 \
-    ENTRYKIT_VERSION=0.4.0
+ENV DOCKER_VERSION=18.09.8 \
+    DOCKER_COMPOSE_VERSION=1.24.1
 
 # Install Docker and Docker Compose
-RUN apk --update --no-cache add \
-    bash \
-    coreutils \
-    curl \
-    device-mapper \
-    iptables \
-    make \
-    py-pip \
-    redis \
-    docker \
-    jq \
-    ca-certificates \
-    xz \
-    util-linux \
- && apk upgrade \
- && pip install docker-compose==${DOCKER_COMPOSE_VERSION} \
-# Install entrykit
- && curl -L https://github.com/progrium/entrykit/releases/download/v${ENTRYKIT_VERSION}/entrykit_${ENTRYKIT_VERSION}_Linux_x86_64.tgz | tar zx \
- && chmod +x entrykit \
- && mv entrykit /bin/entrykit \
- && entrykit --symlink \
-# cleanup
- && rm -rf /var/cache/apk/* \
- && rm -rf /root/.cache
+RUN apk --no-cache add bash curl util-linux device-mapper py-pip python-dev libffi-dev openssl-dev gcc libc-dev make iptables && \
+    curl https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz | tar zx && \
+    mv /docker/* /bin/ && \
+    chmod +x /bin/docker* && \
+    pip install docker-compose==${DOCKER_COMPOSE_VERSION} && \
+    rm -rf /root/.cache
 
-
-# Include useful functions to start/stop docker daemon in garden-runc containers in Concourse CI.
-# Example: source /docker-lib.sh && start_docker
+# Include functions to start/stop docker daemon
 COPY docker-lib.sh /docker-lib.sh
+COPY entrypoint.sh /entrypoint.sh
 
-COPY setup /
-
-ENTRYPOINT [ \
-	"switch", \
-		"shell=/bin/bash", "--", \
-	"codep", \
-		"/usr/local/bin/dockerd" \
-]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/bin/bash"]
