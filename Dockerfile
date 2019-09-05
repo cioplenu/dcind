@@ -25,5 +25,5 @@ CMD ["/bin/bash"]
 
 FROM base as go
 
-RUN apk --no-cache add go
+RUN apk --no-cache add go git
 
