@@ -21,12 +21,15 @@ RUN apk --no-cache add	\
       libc-dev			\
       make				\
       iptables			\
+	  jq				\
       go				\
       git			 && \
-    curl https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz | tar zx && \
-    mv /docker/* /bin/ && \
-    chmod +x /bin/docker* && \
-    pip install docker-compose==${DOCKER_COMPOSE_VERSION} && \
+    curl https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz | tar zx		&& \
+    mv /docker/* /bin/																						&& \
+    chmod +x /bin/docker*																					&& \
+    pip install docker-compose==${DOCKER_COMPOSE_VERSION}													&& \
+    curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh > /wait-for-it.sh	&& \
+    chmod +x /wait-for-it.sh																				&& \
     rm -rf /root/.cache
 
 # Include functions to start/stop docker daemon

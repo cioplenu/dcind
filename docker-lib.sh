@@ -128,3 +128,65 @@ stop_docker() {
   kill -TERM $pid
   rm /tmp/docker.pid
 }
+
+
+# Helper functions for the differnt tasks
+# ---------------------------------------
+
+# The image_names array needs to be defined beforehand
+# Example:
+# load_images db-image api-image
+load_images() {
+  # The docker images need to be preloaded to enable caching
+  # and to let concourse access the private registry
+  message info "Load the docker images from the inputs"
+
+  local image_names=("$@") # get all argumets to load_images into an array
+
+  # Load each image from the corresponding folder and tag it correctly
+  # The structure of the folder is explained here: https://github.com/concourse/registry-image-resource#in-fetch-the-images-rootfs-and-metadata
+  # Note that this script works with the new registry-image resource, not docker-image
+  for image_name in "${image_names[@]}"; do
+      docker load -i "${image_name}/image.tar"
+  done
+
+  message info "This is just to visually check in the log that images have been loaded successfully"
+  docker images
+}
+
+# Use the wait-for-it script to wait for services to come up
+# See: https://github.com/vishnubob/wait-for-it
+# Usage: wait_for_startup localhost:5432 localhost:80
+wait_for_startup() {
+  message info "Wait for services to start"
+
+  local services=("$@")
+
+  for service in "${services[@]}"; do
+      /wait-for-it.sh "${service}" --timeout=480 --strict
+  done
+}
+
+# Can be used to print logs if tests failed. Best used with traps:
+# Example: trap print_logs "${PWD}/src/docker-compose.yml db api" ERR SIGQUIT SIGTERM SIGINT
+# docker-compose logs is called with the first argument to print_logs as the compose file
+# and the rest of the arguments is treated as a names of services. The path to the compose
+# file needs to provided
+# If you want it to work no matter what directory you are in provide an absolute path to
+# the compose file
+print_logs() {
+  echo
+  echo
+  message info "Tests failed. Printing logs."
+  echo
+
+  local compose_file="$1"  # Save first argument in a variable
+  shift					   # Shift all arguments to the left (original $1 gets lost)
+  local services=("$@")    # Rebuild the array with rest of arguments
+
+  for service in "${services[@]}"; do
+    message header "${service} Logs"
+    docker-compose -f "${compose_file}" logs "${service}"
+  done
+}
+
