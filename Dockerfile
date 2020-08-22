@@ -14,7 +14,7 @@ RUN apk --no-cache add	\
       util-linux		\
       device-mapper		\
       py-pip			\
-      python-dev		\
+      python3-dev		\
       libffi-dev		\
       openssl-dev		\
       gcc				\
