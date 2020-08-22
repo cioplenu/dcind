@@ -1,5 +1,5 @@
 # Inspired by https://github.com/mumoshu/dcind
-FROM alpine:3 as base
+FROM alpine as base
 
 LABEL maintainer="Anian Ziegler" \
       email="it@cioplenu.de"
