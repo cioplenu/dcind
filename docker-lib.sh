@@ -149,9 +149,6 @@ load_images() {
   for image_name in "${image_names[@]}"; do
       docker load -i "${image_name}/image.tar"
   done
-
-  message info "This is just to visually check in the log that images have been loaded successfully"
-  docker images
 }
 
 # Use the wait-for-it script to wait for services to come up
