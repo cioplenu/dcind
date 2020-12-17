@@ -147,8 +147,10 @@ load_images() {
   # The structure of the folder is explained here: https://github.com/concourse/registry-image-resource#in-fetch-the-images-rootfs-and-metadata
   # Note that this script works with the new registry-image resource, not docker-image
   for image_name in "${image_names[@]}"; do
-      docker load -i "${image_name}/image.tar"
+      echo "Loading image: ${image_name}"
+      docker load -i "${image_name}/image.tar" > /dev/null &
   done
+  wait
 }
 
 # Use the wait-for-it script to wait for services to come up
