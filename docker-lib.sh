@@ -3,7 +3,7 @@
 
 LOG_FILE=${LOG_FILE:-/tmp/docker.log}
 SKIP_PRIVILEGED=${SKIP_PRIVILEGED:-false}
-STARTUP_TIMEOUT=${STARTUP_TIMEOUT:-20}
+STARTUP_TIMEOUT=${STARTUP_TIMEOUT:-300}
 
 sanitize_cgroups() {
   mkdir -p /sys/fs/cgroup
@@ -162,7 +162,7 @@ wait_for_startup() {
   local services=("$@")
 
   for service in "${services[@]}"; do
-      /wait-for-it.sh "${service}" --timeout=480 --strict
+      /wait-for-it.sh "${service}" --timeout=600 --strict
   done
 }
 
