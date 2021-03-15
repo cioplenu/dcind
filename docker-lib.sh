@@ -190,3 +190,11 @@ print_logs() {
   done
 }
 
+# Useful if many docker containers doing port bindings might start in paralell to make sure one
+# waits for the other. Docker does not seem to handle that itself very well.
+wait_for_iptables_lock() {
+	while lsof /run/xtables.lock 2> /dev/null; do
+		message info "Waiting for iptables lock to be released..."
+		sleep 1
+	done;
+}
